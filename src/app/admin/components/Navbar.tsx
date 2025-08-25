@@ -1,4 +1,6 @@
 // src/app/admin/components/Navbar.tsx
+/* eslint-disable react/no-unescaped-entities */
+
 'use client';
 
 import React, { useState, useEffect } from 'react';

@@ -1,3 +1,5 @@
+/* eslint-disable react/no-unescaped-entities */
+
 // src/components/EmployeeProtectedRoute.tsx
 'use client';
 

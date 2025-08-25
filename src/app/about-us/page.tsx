@@ -174,7 +174,7 @@ export default function AboutUsPage() {
                 
                 <p className="text-lg leading-relaxed">
                   What started as weekend repairs for friends and family grew into a small shop, then a trusted 
-                  business serving thousands of customers. Today, we're proud to be the go-to repair experts 
+                  business serving thousands of customers. Today, we&apos;re proud to be the go-to repair experts 
                   for individuals, small businesses, and even other repair shops who trust us with their most 
                   challenging cases.
                 </p>

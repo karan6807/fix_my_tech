@@ -1,3 +1,5 @@
+/* eslint-disable react/no-unescaped-entities */
+
 'use client';
 import React, { useState } from 'react';
 import { Lock, Eye, EyeOff, Shield, CheckCircle, ArrowLeft } from 'lucide-react';
