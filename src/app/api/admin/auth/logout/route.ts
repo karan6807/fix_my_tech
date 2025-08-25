@@ -15,7 +15,7 @@ export async function POST(request: NextRequest) {
     if (token) {
       try {
         // Verify and decode token to get admin ID
-        const decodedToken: any = jwt.verify(token, JWT_SECRET);
+        const decodedToken = jwt.verify(token, JWT_SECRET) as { type: string; adminId: string };
         
         if (decodedToken.type === 'admin' && decodedToken.adminId) {
           // Clean up any remaining OTPs for this admin (optional)

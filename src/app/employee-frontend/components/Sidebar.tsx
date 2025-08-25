@@ -91,7 +91,7 @@ export default function EmployeeSidebar({ isCollapsed, onToggle }: SidebarProps)
     }
   };
 
-  const renderNavItem = (item: any) => (
+  const renderNavItem = (item: { href: string; label: string; icon: React.ReactNode }) => (
     <button
       key={item.href}
       onClick={() => handleNavClick(item.href)}

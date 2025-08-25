@@ -17,7 +17,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Invalid employee token' }, { status: 401 });
     }
 
-    const { userId, email } = decoded as { userId: string; email: string };
+    const { userId } = decoded as { userId: string; email: string };
 
     // Get employee name from employees table
     const { data: employee } = await supabaseAdmin
@@ -39,7 +39,7 @@ export async function GET(request: NextRequest) {
       .limit(10);
     
     console.log('All assignments in database:');
-    allAssignments?.forEach((assignment: any, index: number) => {
+    allAssignments?.forEach((assignment: { id: string; assigned_engineer: string }, index: number) => {
       console.log(`${index + 1}. ID: ${assignment.id}, Assigned to: "${assignment.assigned_engineer}"`);
     });
     
@@ -80,7 +80,30 @@ export async function GET(request: NextRequest) {
     }
 
     // Transform data to match frontend interface
-    const transformedTasks = bookings?.map((booking: any) => ({
+    const transformedTasks = bookings?.map((booking: {
+      id: string;
+      users?: { name: string; email: string };
+      contact_phone: string;
+      device_type: string;
+      model?: string;
+      service_type: string;
+      issue_description: string;
+      address: string;
+      status: string;
+      preferred_date: string;
+      preferred_time: string;
+      created_at: string;
+      updated_at: string;
+      assigned_engineer: string;
+      hold_reason?: string;
+      unable_reason?: string;
+      repair_completion_reports?: {
+        work_performed: string;
+        parts_used: string;
+        completed_at: string;
+      };
+      repair_payments?: Array<{ amount: number; payment_method: string; recorded_at: string }>;
+    }) => ({
       id: booking.id,
       customerName: booking.users?.name || 'Unknown',
       email: booking.users?.email || 'No email',

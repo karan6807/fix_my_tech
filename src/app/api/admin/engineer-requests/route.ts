@@ -65,7 +65,19 @@ export async function GET(request: NextRequest) {
 
 
     // Format the requests data
-    const formattedRequests = requests.map((request: any) => ({
+    const formattedRequests = requests.map((request: {
+      id: string;
+      contact_phone: string;
+      device_type: string;
+      model: string;
+      issue_description: string;
+      address: string;
+      created_at: string;
+      status: string;
+      service_type: string;
+      users?: { name: string; email: string };
+      repair_payments?: Array<{ amount: number }>;
+    }) => ({
       id: request.id,
       customerName: request.users?.name || 'Unknown Customer',
       customerPhone: request.contact_phone,

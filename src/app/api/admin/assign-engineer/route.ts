@@ -16,7 +16,7 @@ export async function POST(request: NextRequest) {
     
     console.log('All repair bookings in database:', allBookings?.length || 0, 'records');
     if (allBookings && allBookings.length > 0) {
-      allBookings.forEach((booking: any, index: number) => {
+      allBookings.forEach((booking: { id: string; status: string; assigned_engineer: string | null }, index: number) => {
         console.log(`${index + 1}. ID: ${booking.id}, Status: ${booking.status}, Assigned: ${booking.assigned_engineer || 'NULL'}`);
       });
     } else {

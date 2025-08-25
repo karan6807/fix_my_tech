@@ -1,3 +1,5 @@
+/* eslint-disable react/no-unescaped-entities */
+
 // src/app/api/auth/forgot-password/route.js
 import { NextRequest, NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase';

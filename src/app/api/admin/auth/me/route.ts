@@ -20,9 +20,9 @@ export async function GET(request: NextRequest) {
     }
 
     // Verify JWT token
-    let decodedToken: any;
+    let decodedToken: { type: string; adminId: string };
     try {
-      decodedToken = jwt.verify(token, JWT_SECRET);
+      decodedToken = jwt.verify(token, JWT_SECRET) as { type: string; adminId: string };
     } catch (jwtError) {
       return NextResponse.json(
         { error: 'Invalid token' },

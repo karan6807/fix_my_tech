@@ -1,5 +1,3 @@
-/* eslint-disable react/no-unescaped-entities */
-
 'use client';
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
@@ -131,8 +129,9 @@ export default function AdminSignInPage() {
       // Redirect to OTP verification
       router.push('/admin/auth/verify-otp');
 
-    } catch (error: any) {
-      setErrors({ general: error.message });
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : 'An unexpected error occurred';
+      setErrors({ general: errorMessage });
     } finally {
       setIsLoading(false);
     }

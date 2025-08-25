@@ -1,3 +1,5 @@
+/* eslint-disable react/no-unescaped-entities */
+
 'use client';
 import React, { useState, useEffect } from 'react';
 import { Search, Filter, Eye, Phone, Mail, MapPin, Clock, CheckCircle, XCircle, AlertCircle, RefreshCw, Wrench, Calendar } from 'lucide-react';

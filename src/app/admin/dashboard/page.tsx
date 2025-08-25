@@ -2,7 +2,7 @@
 
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useAdminAuth } from '@/contexts/AdminAuthContext';
 
 interface StatsCardProps {
@@ -81,7 +81,7 @@ export default function AdminDashboard() {
       const data = await response.json();
       
       if (data.success) {
-        const revenue = data.payments.reduce((sum: number, payment: any) => {
+        const revenue = data.payments.reduce((sum: number, payment: { company_commission?: number; amount: string }) => {
           // Use company_commission if available, otherwise calculate 70% of amount
           const companyShare = payment.company_commission || (parseFloat(payment.amount) * 0.70);
           return sum + companyShare;
@@ -94,7 +94,7 @@ export default function AdminDashboard() {
   };
 
   // Fetch repair bookings from API
-  const fetchRepairBookings = async (page = 1, isRefresh = false) => {
+  const fetchRepairBookings = useCallback(async (page = 1, isRefresh = false) => {
     try {
       if (isRefresh) {
         setIsRefreshing(true);
@@ -124,13 +124,13 @@ export default function AdminDashboard() {
       } else {
         setError(data.error || 'Failed to fetch repair bookings');
       }
-    } catch (err) {
+    } catch {
       setError('Network error while fetching repair bookings');
     } finally {
       setLoading(false);
       setIsRefreshing(false);
     }
-  };
+  }, [searchTerm]);
 
   // Handle refresh button click
   const handleRefresh = () => {
@@ -141,7 +141,7 @@ export default function AdminDashboard() {
   useEffect(() => {
     fetchRepairBookings();
     fetchTotalRevenue();
-  }, []);
+  }, [fetchRepairBookings]);
 
   // Fetch when search changes
   useEffect(() => {
@@ -150,7 +150,7 @@ export default function AdminDashboard() {
     }, 300);
 
     return () => clearTimeout(timeoutId);
-  }, [searchTerm]);
+  }, [searchTerm, fetchRepairBookings]);
 
   const getStatusIcon = (status: string) => {
     switch (status) {

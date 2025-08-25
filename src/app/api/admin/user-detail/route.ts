@@ -61,14 +61,27 @@ export async function GET(request: NextRequest) {
       totalRequests: requestsData?.length || 0,
       lastActivity: userData.updated_at?.split('T')[0] || 'N/A',
       satisfactionRate: 85, // Mock for now
-      totalSpent: requestsData?.reduce((sum: number, req: any) => {
+      totalSpent: requestsData?.reduce((sum: number, req: {
+        repair_payments?: Array<{ amount: string }>;
+      }) => {
         const cost = req.repair_payments && req.repair_payments.length > 0 ? parseFloat(req.repair_payments[0].amount) || 0 : 0;
         return sum + cost;
       }, 0) || 0
     };
 
     // Transform requests data
-    const requests = requestsData?.map((request: any) => {
+    const requests = requestsData?.map((request: {
+      id: string;
+      service_type?: string;
+      device_type: string;
+      model?: string;
+      issue_description: string;
+      status: string;
+      created_at?: string;
+      updated_at?: string;
+      assigned_engineer?: string;
+      repair_payments?: Array<{ amount: string }>;
+    }) => {
       console.log('Processing request:', request.id);
       console.log('Request repair_payments:', request.repair_payments);
       console.log('Payment amount:', request.repair_payments?.amount);

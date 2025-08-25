@@ -1,3 +1,5 @@
+/* eslint-disable react/no-unescaped-entities */
+
 // src/app/auth/verify-otp/page.tsx
 'use client';
 

@@ -1,8 +1,6 @@
-/* eslint-disable react/no-unescaped-entities */
-
 'use client';
 
-import React, { useState } from 'react';
+import React from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 
 // Generic props type for icons
@@ -87,7 +85,7 @@ export default function AdminSidebar({ isCollapsed, onToggle }: SidebarProps) {
     if (window.innerWidth < 1024) onToggle();
   };
 
-  const renderNavItem = (item: any) => (
+  const renderNavItem = (item: { href: string; label: string; icon: React.ReactNode }) => (
     <button
       key={item.href}
       onClick={() => handleNavClick(item.href)}

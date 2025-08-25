@@ -74,7 +74,10 @@ export default function ForgotPasswordPage() {
     // TODO: Implement resend email functionality
     console.log('Resending email to:', formData.email);
     setIsEmailSent(false);
-    handleSubmit({ preventDefault: () => {} } as any);
+    const mockEvent = {
+      preventDefault: () => {}
+    } as React.MouseEvent<HTMLButtonElement>;
+    handleSubmit(mockEvent);
   };
 
   if (isEmailSent) {

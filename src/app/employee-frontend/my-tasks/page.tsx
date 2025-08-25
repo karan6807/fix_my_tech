@@ -1,11 +1,12 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Calendar, Clock, User, Phone, Mail, MapPin, Wrench, CheckCircle2, AlertCircle, PlayCircle, XCircle, Eye, Search, Filter, Download, MoreVertical, Smartphone, Laptop, Monitor, X, PauseCircle } from 'lucide-react';
+import Image from 'next/image';
+import { Calendar, Clock, User, Phone, Mail, MapPin, Wrench, CheckCircle2, AlertCircle, PlayCircle, XCircle, Eye, Search, Filter, Download, Smartphone, Laptop, Monitor, X, PauseCircle } from 'lucide-react';
 
 // Component to display proof images for completed tasks
 function CompletedTaskImages({ bookingId }: { bookingId: string }) {
-    const [proofImages, setProofImages] = useState<any[]>([]);
+    const [proofImages, setProofImages] = useState<{ id: string; imageUrl: string; fileName: string }[]>([]);
     const [loadingImages, setLoadingImages] = useState(false);
     const [showImageModal, setShowImageModal] = useState(false);
     const [selectedImage, setSelectedImage] = useState<string | null>(null);
@@ -53,9 +54,11 @@ function CompletedTaskImages({ bookingId }: { bookingId: string }) {
                 <div className="mt-1 grid grid-cols-2 md:grid-cols-3 gap-3">
                     {proofImages.map((image) => (
                         <div key={image.id} className="relative group">
-                            <img
+                            <Image
                                 src={image.imageUrl}
                                 alt={image.fileName}
+                                width={200}
+                                height={150}
                                 className="w-full h-54 object-cover rounded-lg border-2 border-white shadow-sm cursor-pointer hover:shadow-md transition-shadow"
                                 onClick={() => {
                                     setSelectedImage(image.imageUrl);
@@ -79,9 +82,11 @@ function CompletedTaskImages({ bookingId }: { bookingId: string }) {
             {showImageModal && selectedImage && (
                 <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4" onClick={() => setShowImageModal(false)}>
                     <div className="relative max-w-4xl max-h-full">
-                        <img
+                        <Image
                             src={selectedImage}
                             alt="Proof image"
+                            width={800}
+                            height={600}
                             className="max-w-full max-h-full object-contain rounded-lg"
                         />
                         <button
@@ -129,7 +134,7 @@ type PriorityType = 'high' | 'medium' | 'low';
 
 export default function Dashboard() {
     const [bookings, setBookings] = useState<RepairBooking[]>([]);
-    const [loading, setLoading] = useState(true);
+
     const [error, setError] = useState('');
     const [showCompletionModal, setShowCompletionModal] = useState(false);
     const [selectedBooking, setSelectedBooking] = useState<RepairBooking | null>(null);
@@ -160,12 +165,11 @@ export default function Dashboard() {
 
     const fetchAssignedTasks = async () => {
         try {
-            setLoading(true);
             const response = await fetch('/api/employee/tasks');
             const data = await response.json();
 
             if (data.success) {
-                const transformedTasks = data.tasks.map((task: any) => ({
+                const transformedTasks = data.tasks.map((task: { id: string; customerName: string; email: string; phone: string; address: string; serviceType: string; device: string; issue: string; status: string; createdAt: string; assignedEngineer?: string; holdReason?: string; unableReason?: string; completionReport?: { workPerformed: string; partsUsed?: string; paymentAmount?: number; completedAt: string } }) => ({
                     id: task.id,
                     displayId: parseInt(task.id.slice(-8), 16),
                     name: task.customerName,
@@ -201,8 +205,8 @@ export default function Dashboard() {
             }
         } catch (err) {
             setError('Network error while fetching tasks');
-        } finally {
-            setLoading(false);
+        } catch (err) {
+            setError('Network error while fetching tasks');
         }
     };
 

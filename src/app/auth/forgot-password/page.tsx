@@ -1,3 +1,5 @@
+/* eslint-disable react/no-unescaped-entities */
+
 // src/app/auth/forgot-password/page.tsx
 'use client';
 

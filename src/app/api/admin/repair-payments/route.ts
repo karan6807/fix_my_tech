@@ -1,7 +1,7 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase';
 
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
     // Fetch payments with booking and user details
     const { data: payments, error } = await supabaseAdmin
@@ -31,7 +31,26 @@ export async function GET(request: NextRequest) {
     }
 
     // Format the data for the frontend
-    const formattedPayments = payments.map((payment: any) => ({
+    const formattedPayments = payments.map((payment: {
+      id: string;
+      booking_id: string;
+      amount: string;
+      payment_method: string;
+      payment_status: string;
+      recorded_at: string;
+      upi_transaction_id?: string;
+      repair_bookings: {
+        id: string;
+        service_type: string;
+        device_type: string;
+        assigned_engineer?: string;
+        contact_phone: string;
+        users: {
+          name: string;
+          email: string;
+        };
+      };
+    }) => ({
       id: payment.id,
       orderId: payment.booking_id.slice(-8).toUpperCase(),
       customerName: payment.repair_bookings.users.name,

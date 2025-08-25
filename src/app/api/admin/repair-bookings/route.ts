@@ -7,22 +7,7 @@ interface User {
   email: string;
 }
 
-interface RepairBooking {
-  id: string;
-  user_id: string;
-  device_type: string;
-  model: string;
-  issue_description: string;
-  contact_phone: string;
-  preferred_date: string;
-  preferred_time: string;
-  address: string;
-  status: string;
-  created_at: string;
-  updated_at: string;
-  service_type: string;
-  users?: User;
-}
+
 
 export async function GET(request: NextRequest) {
   try {
@@ -71,7 +56,7 @@ export async function GET(request: NextRequest) {
     // Apply pagination
     query = query.range(offset, offset + limit - 1);
 
-    const { data: bookings, error, count } = await query;
+    const { data: bookings, error } = await query;
 
     if (error) {
       console.error('Database error:', error);
@@ -88,7 +73,30 @@ export async function GET(request: NextRequest) {
       .neq('status', 'cancelled');
 
     // Transform data to match frontend interface
-    const transformedBookings = bookings?.map((booking: any) => ({
+    const transformedBookings = bookings?.map((booking: {
+      id: string;
+      users?: { name: string; email: string };
+      contact_phone: string;
+      device_type: string;
+      model: string;
+      service_type: string;
+      issue_description: string;
+      address: string;
+      status: string;
+      preferred_date: string;
+      preferred_time: string;
+      created_at: string;
+      updated_at: string;
+      assigned_engineer?: string;
+      hold_reason?: string;
+      unable_reason?: string;
+      repair_completion_reports?: {
+        work_performed: string;
+        parts_used: string;
+        payment_amount: number;
+        completed_at: string;
+      };
+    }) => ({
       id: booking.id,
       customerName: booking.users?.name || 'Unknown',
       email: booking.users?.email || 'No email',

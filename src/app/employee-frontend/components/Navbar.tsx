@@ -1,3 +1,5 @@
+/* eslint-disable react/no-unescaped-entities */
+
 // src/app/employee/components/Navbar.tsx
 'use client';
 
@@ -72,11 +74,7 @@ const CalendarIcon = ({ className = 'w-4 h-4' }: IconProps) => (
     </svg>
 );
 
-const TaskIcon = ({ className = 'w-4 h-4' }: IconProps) => (
-    <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
-    </svg>
-);
+
 
 const StarIcon = ({ className = 'w-4 h-4' }: IconProps) => (
     <svg className={className} fill="currentColor" viewBox="0 0 20 20">
@@ -149,7 +147,7 @@ export default function EmployeeNavbar({ onToggleSidebar }: NavbarProps) {
         fetchNotifications();
         const interval = setInterval(fetchNotifications, 30000);
         return () => clearInterval(interval);
-    }, [employee?.id]);
+    }, [employee?.id, fetchNotifications]);
 
     const getStatusColor = (status: string) => {
         switch (status) {
@@ -251,7 +249,7 @@ export default function EmployeeNavbar({ onToggleSidebar }: NavbarProps) {
                                     </div>
                                     
                                     {notifications.length > 0 ? (
-                                        notifications.map((notification: any) => (
+                                        notifications.map((notification: { id: string; title: string; message: string; created_at: string }) => (
                                             <div key={notification.id} className="px-4 py-3 hover:bg-gray-50 border-b border-gray-50 last:border-b-0">
                                                 <div className="flex items-start space-x-3">
                                                     <div className="w-2 h-2 bg-orange-500 rounded-full mt-2 flex-shrink-0"></div>

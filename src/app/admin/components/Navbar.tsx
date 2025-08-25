@@ -114,7 +114,7 @@ export default function AdminNavbar({ onToggleSidebar }: NavbarProps) {
     await signOut();
   };
 
-  const fetchNotifications = async () => {
+  const fetchNotifications = React.useCallback(async () => {
     try {
       const adminId = admin?.id || 'admin-default';
       const response = await fetch(`/api/notifications?userId=${adminId}&userType=admin&unreadOnly=true`);
@@ -130,7 +130,7 @@ export default function AdminNavbar({ onToggleSidebar }: NavbarProps) {
       setNotifications([]);
       setNotificationCount(0);
     }
-  };
+  }, [admin?.id]);
 
   const markAsRead = async (notificationIds?: string[]) => {
     try {
@@ -158,7 +158,7 @@ export default function AdminNavbar({ onToggleSidebar }: NavbarProps) {
       const interval = setInterval(fetchNotifications, 30000);
       return () => clearInterval(interval);
     }
-  }, [admin?.id]);
+  }, [admin?.id, fetchNotifications]);
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -260,7 +260,7 @@ export default function AdminNavbar({ onToggleSidebar }: NavbarProps) {
                   </div>
                   
                   {notifications.length > 0 ? (
-                    notifications.map((notification: any) => (
+                    notifications.map((notification: { id: string; title: string; message: string; created_at: string }) => (
                       <div key={notification.id} className="px-4 py-3 hover:bg-gray-50 border-b border-gray-50 last:border-b-0">
                         <div className="flex items-start space-x-3">
                           <div className="w-2 h-2 bg-orange-500 rounded-full mt-2 flex-shrink-0"></div>

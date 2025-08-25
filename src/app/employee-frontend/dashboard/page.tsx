@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Calendar, Clock, User, Phone, Mail, MapPin, Wrench, CheckCircle2, AlertCircle, PlayCircle, XCircle, TrendingUp, Eye, ArrowRight, Smartphone, Laptop, Monitor, BarChart3, X } from 'lucide-react';
+import { Calendar, Clock, User, Phone, Mail, Wrench, CheckCircle2, AlertCircle, PlayCircle, XCircle, TrendingUp, Eye, Smartphone, Laptop, Monitor, X } from 'lucide-react';
 
 interface RepairBooking {
     id: number;
@@ -39,7 +39,7 @@ export default function Dashboard() {
             if (data.success) {
                 console.log('Tasks received:', data.tasks.length);
                 // Transform API data to match component interface
-                const transformedTasks = data.tasks.map((task: any) => ({
+                const transformedTasks = data.tasks.map((task: { id: string; customerName: string; email: string; phone: string; serviceType: string; device: string; issue: string; status: string; createdAt: string; assignedEngineer?: string }) => ({
                     id: parseInt(task.id.slice(-8), 16), // Convert UUID to number for display
                     name: task.customerName,
                     email: task.email,

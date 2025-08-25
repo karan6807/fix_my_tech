@@ -1,7 +1,7 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase';
 
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
     // Fetch users with their repair request counts
     const { data: users, error } = await supabaseAdmin
@@ -25,7 +25,14 @@ export async function GET(request: NextRequest) {
     }
 
     // Transform data to match frontend interface
-    const transformedUsers = users?.map((user: any) => ({
+    const transformedUsers = users?.map((user: {
+      id: string;
+      name: string;
+      email: string;
+      created_at: string;
+      email_verified: boolean;
+      repair_bookings: Array<{ count: number }>;
+    }) => ({
       id: user.id,
       name: user.name,
       email: user.email,

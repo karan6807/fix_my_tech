@@ -14,7 +14,7 @@ export async function GET(request: NextRequest) {
     }
 
     // First get the completion report ID for this booking
-    const { data: completionReport, error: reportError } = await supabaseAdmin
+    const { data: completionReport } = await supabaseAdmin
       .from('repair_completion_reports')
       .select('id')
       .eq('booking_id', bookingId)
@@ -28,13 +28,14 @@ export async function GET(request: NextRequest) {
     }
 
     // Get proof images by repair_completion_id
-    let { data: images, error: imagesError } = await supabaseAdmin
+    const { data: initialImages, error: imagesError } = await supabaseAdmin
       .from('repair_proof_images')
       .select('*')
       .eq('repair_completion_id', completionReport.id)
       .order('created_at', { ascending: true });
 
     // If no images found, try to find images that might be linked to other completion reports for this booking
+    let images = initialImages;
     if (!images || images.length === 0) {
       const { data: allImages } = await supabaseAdmin
         .from('repair_proof_images')
@@ -63,7 +64,13 @@ export async function GET(request: NextRequest) {
     }
 
     // Get public URLs for images and format response
-    const formattedImages = await Promise.all(images.map(async (img: any) => {
+    const formattedImages = await Promise.all(images.map(async (img: {
+      id: string;
+      image_key: string;
+      file_name: string;
+      file_size: number;
+      created_at: string;
+    }) => {
       const { data: publicUrl } = supabaseAdmin.storage
         .from('repair-images')
         .getPublicUrl(img.image_key);

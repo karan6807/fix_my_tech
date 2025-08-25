@@ -40,7 +40,28 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Failed to fetch your bookings' }, { status: 500 });
     }
 
-    const transformedBookings = bookings?.map((booking: any) => ({
+    const transformedBookings = bookings?.map((booking: {
+      id: string;
+      users?: { name: string; email: string };
+      contact_phone: string;
+      device_type: string;
+      model?: string;
+      service_type: string;
+      issue_description: string;
+      address: string;
+      status: string;
+      preferred_date: string;
+      preferred_time: string;
+      created_at: string;
+      updated_at: string;
+      assigned_engineer?: string;
+      repair_completion_reports?: {
+        work_performed: string;
+        parts_used: string;
+        payment_amount: number;
+        completed_at: string;
+      };
+    }) => ({
       id: booking.id,
       customerName: booking.users?.name || 'Unknown',
       email: booking.users?.email || 'No email',

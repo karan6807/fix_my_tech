@@ -223,7 +223,7 @@ export default function EngineerDetailPage() {
           {/* Avatar */}
           <div className="w-24 h-24 bg-gradient-to-br from-orange-400 to-orange-600 rounded-full flex items-center justify-center">
             <span className="text-white font-bold text-2xl">
-              {engineer.fullName ? engineer.fullName.split(' ').map(n => n[0]).join('') : 'N/A'}
+              {engineer.fullName ? engineer.fullName.split(' ').map((n: string) => n[0]).join('') : 'N/A'}
             </span>
           </div>
 
@@ -325,7 +325,7 @@ export default function EngineerDetailPage() {
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
-                {requests.map((request) => (
+                {requests.map((request: Request) => (
                   <tr key={request.id} className="hover:bg-gray-50">
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div>
