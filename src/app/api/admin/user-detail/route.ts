@@ -84,7 +84,7 @@ export async function GET(request: NextRequest) {
     }) => {
       console.log('Processing request:', request.id);
       console.log('Request repair_payments:', request.repair_payments);
-      console.log('Payment amount:', request.repair_payments?.amount);
+      console.log('Payment amount:', request.repair_payments?.[0]?.amount);
       
       const cost = request.repair_payments && request.repair_payments.length > 0 ? parseFloat(request.repair_payments[0].amount) || 0 : 0;
       console.log('Final cost:', cost);
