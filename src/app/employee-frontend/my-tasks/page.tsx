@@ -205,8 +205,6 @@ export default function Dashboard() {
             }
         } catch (err) {
             setError('Network error while fetching tasks');
-        } catch (err) {
-            setError('Network error while fetching tasks');
         }
     };
 
