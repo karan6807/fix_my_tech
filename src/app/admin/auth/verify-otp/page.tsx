@@ -86,7 +86,7 @@ export default function AdminVerifyOTPPage() {
   const [isResending, setIsResending] = useState<boolean>(false);
   const [error, setError] = useState<string>('');
   const [success, setSuccess] = useState<boolean>(false);
-  const [countdown, setCountdown] = useState<number>(60);
+  const [countdown, setCountdown] = useState<number>(600); // 10 minutes
   const [canResend, setCanResend] = useState<boolean>(false);
   const [adminAuth, setAdminAuth] = useState<{ adminId: string; email: string } | null>(null);
   const [purpose, setPurpose] = useState<string>('');
@@ -154,8 +154,26 @@ export default function AdminVerifyOTPPage() {
 
     try {
       if (purpose === 'password_reset') {
-        // For password reset, just redirect to reset password page
-        window.location.href = `/admin/auth/reset-password?email=${encodeURIComponent(adminAuth.email)}&otp=${otp}`;
+        // Verify OTP first for password reset
+        const verifyResponse = await fetch('/api/admin/auth/verify-otp', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            email: adminAuth.email,
+            otp: otp,
+            purpose: 'password_reset'
+          }),
+        });
+
+        if (verifyResponse.ok) {
+          // Redirect to reset password page
+          window.location.href = `/admin/auth/reset-password?email=${encodeURIComponent(adminAuth.email)}&otp=${otp}`;
+        } else {
+          const data = await verifyResponse.json();
+          throw new Error(data.error || 'OTP verification failed');
+        }
         return;
       }
 
@@ -232,7 +250,7 @@ export default function AdminVerifyOTPPage() {
       }
 
       // Reset countdown
-      setCountdown(60);
+      setCountdown(600); // 10 minutes
       setCanResend(false);
 
     } catch (error: unknown) {

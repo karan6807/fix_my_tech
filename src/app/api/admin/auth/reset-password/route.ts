@@ -30,20 +30,30 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Check if OTP is expired
-    if (new Date() > new Date(otpRecord.expires_at)) {
+    // Check if OTP is expired using database time
+    const { data: timeCheck } = await supabaseAdmin
+      .from('admin_otps')
+      .select('expires_at')
+      .eq('id', otpRecord.id)
+      .gt('expires_at', new Date().toISOString())
+      .single();
+    
+    if (!timeCheck) {
+      console.log('Reset - OTP has expired - Current:', new Date().toISOString(), 'Expires:', otpRecord.expires_at);
       return NextResponse.json(
         { error: 'OTP has expired' },
         { status: 400 }
       );
     }
+    
+    console.log('Reset - OTP is valid - Current:', new Date().toISOString(), 'Expires:', otpRecord.expires_at);
 
     // Hash new password
     const hashedPassword = await bcrypt.hash(newPassword, 12);
 
     // Update admin password
     const { error: updateError } = await supabaseAdmin
-      .from('admins')
+      .from('admin_users')
       .update({ password: hashedPassword })
       .eq('email', email);
 

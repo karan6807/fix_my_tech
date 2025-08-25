@@ -1,5 +1,6 @@
 // src/app/api/admin/auth/verify-otp/route.ts
 import { NextRequest, NextResponse } from 'next/server';
+import { supabaseAdmin } from '@/lib/supabase';
 import jwt from 'jsonwebtoken';
 import { supabase } from '@/lib/supabase';
 
@@ -7,12 +8,68 @@ const JWT_SECRET = process.env.JWT_SECRET || 'your-jwt-secret';
 
 export async function POST(request: NextRequest) {
   try {
-    const { otp, adminId } = await request.json();
+    const { otp, adminId, email, purpose } = await request.json();
 
     // Validation
-    if (!otp || !adminId) {
+    if (!otp) {
       return NextResponse.json(
-        { error: 'OTP and admin ID are required' },
+        { error: 'OTP is required' },
+        { status: 400 }
+      );
+    }
+
+    // Handle password reset OTP verification
+    if (purpose === 'password_reset' && email) {
+      const { data: otpRecord, error: otpError } = await supabaseAdmin
+        .from('admin_otps')
+        .select('*')
+        .eq('email', email)
+        .eq('otp', otp)
+        .eq('purpose', 'password_reset')
+        .eq('used', false)
+        .single();
+
+      if (otpError || !otpRecord) {
+        return NextResponse.json(
+          { error: 'Invalid or expired OTP' },
+          { status: 400 }
+        );
+      }
+
+      // Check if OTP is expired using database time
+      const { data: timeCheck } = await supabaseAdmin
+        .from('admin_otps')
+        .select('expires_at')
+        .eq('id', otpRecord.id)
+        .gt('expires_at', new Date().toISOString())
+        .single();
+      
+      if (!timeCheck) {
+        console.log('OTP has expired - Current:', new Date().toISOString(), 'Expires:', otpRecord.expires_at);
+        return NextResponse.json(
+          { error: 'OTP has expired' },
+          { status: 400 }
+        );
+      }
+      
+      console.log('OTP is valid - Current:', new Date().toISOString(), 'Expires:', otpRecord.expires_at);
+
+      // Extend OTP validity by 15 more minutes for password reset
+      const newExpiryTime = new Date(Date.now() + 15 * 60 * 1000);
+      await supabaseAdmin
+        .from('admin_otps')
+        .update({ expires_at: newExpiryTime })
+        .eq('id', otpRecord.id);
+
+      return NextResponse.json({
+        success: true,
+        message: 'OTP verified for password reset'
+      });
+    }
+
+    if (!adminId) {
+      return NextResponse.json(
+        { error: 'Admin ID is required for login verification' },
         { status: 400 }
       );
     }

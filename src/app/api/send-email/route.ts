@@ -974,6 +974,68 @@ export async function POST(request: NextRequest) {
         </body>
         </html>
       `;
+    } else if (type === 'admin_password_reset_otp') {
+      htmlContent = `
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <meta charset="utf-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          <title>Admin Password Reset OTP</title>
+        </head>
+        <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
+          <div style="background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%); padding: 30px; text-align: center; border-radius: 10px 10px 0 0;">
+            <h1 style="color: white; margin: 0; font-size: 28px;">TechService Admin</h1>
+            <p style="color: white; margin: 10px 0 0 0; opacity: 0.9;">Password Reset Request</p>
+          </div>
+          
+          <div style="background: white; padding: 30px; border-radius: 0 0 10px 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+            <div style="text-align: center; margin-bottom: 30px;">
+              <div style="background: #dc2626; width: 80px; height: 80px; border-radius: 50%; margin: 0 auto 20px; display: flex; align-items: center; justify-content: center;">
+                <span style="color: white; font-size: 40px;">🔐</span>
+              </div>
+              <h2 style="color: #dc2626; margin: 0; font-size: 24px;">Password Reset Code</h2>
+            </div>
+            
+            <p>Hello Admin,</p>
+            
+            <p>You have requested to reset your admin password. Please use the following 6-digit code to proceed:</p>
+            
+            <div style="background: #fef2f2; padding: 20px; border-radius: 8px; margin: 20px 0; text-align: center; border-left: 4px solid #dc2626;">
+              <h3 style="margin-top: 0; color: #333; font-size: 14px; text-transform: uppercase; letter-spacing: 1px;">Your Reset Code</h3>
+              <div style="font-size: 32px; font-weight: bold; color: #dc2626; letter-spacing: 8px; font-family: monospace;">${data.otp}</div>
+              <p style="margin-bottom: 0; color: #666; font-size: 12px;">This code expires in 30 minutes</p>
+            </div>
+            
+            <div style="background: #fee2e2; padding: 15px; border-radius: 8px; margin: 20px 0;">
+              <p style="margin: 0; color: #991b1b;"><strong>⚠️ Security Notice:</strong> If you did not request this password reset, please ignore this email and contact IT support immediately.</p>
+            </div>
+            
+            <h3 style="color: #333;">Next Steps:</h3>
+            <ul style="padding-left: 20px;">
+              <li>Enter the 6-digit code on the verification page</li>
+              <li>Create a new secure password</li>
+              <li>Sign in with your new credentials</li>
+            </ul>
+            
+            <div style="background: #dbeafe; padding: 15px; border-radius: 8px; margin: 20px 0;">
+              <p style="margin: 0; color: #1e40af;"><strong>🕒 Time Sensitive:</strong> This code will expire in 30 minutes for security reasons.</p>
+            </div>
+            
+            <hr style="border: none; border-top: 1px solid #eee; margin: 30px 0;">
+            
+            <div style="text-align: center; color: #666; font-size: 14px;">
+              <p><strong>🔒 Secure Admin Access</strong></p>
+              <p>This is an automated security email for admin password reset.</p>
+              <p>📧 ${data.email}</p>
+              <p style="margin-top: 20px; font-size: 12px; color: #999;">
+                If you need assistance, contact IT support. Do not share this code with anyone.
+              </p>
+            </div>
+          </div>
+        </body>
+        </html>
+      `;
     } else if (type === 'status_update') {
       htmlContent = `
         <!DOCTYPE html>

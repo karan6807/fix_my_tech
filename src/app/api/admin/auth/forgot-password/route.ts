@@ -14,7 +14,7 @@ export async function POST(request: NextRequest) {
 
     // Check if admin exists
     const { data: admin, error: adminError } = await supabaseAdmin
-      .from('admins')
+      .from('admin_users')
       .select('id, email')
       .eq('email', email)
       .single();
@@ -28,9 +28,8 @@ export async function POST(request: NextRequest) {
 
     // Generate 6-digit OTP
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
-    const expiresAt = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
 
-    // Save OTP to database
+    // Use SQL to set expiry time to avoid timezone issues
     const { error: otpError } = await supabaseAdmin
       .from('admin_otps')
       .upsert({
@@ -38,7 +37,7 @@ export async function POST(request: NextRequest) {
         email: email,
         otp: otp,
         purpose: 'password_reset',
-        expires_at: expiresAt.toISOString(),
+        expires_at: new Date(Date.now() + 30 * 60 * 1000).toISOString(),
         used: false
       });
 
