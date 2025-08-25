@@ -89,23 +89,36 @@ export default function AdminVerifyOTPPage() {
   const [countdown, setCountdown] = useState<number>(60);
   const [canResend, setCanResend] = useState<boolean>(false);
   const [adminAuth, setAdminAuth] = useState<{ adminId: string; email: string } | null>(null);
+  const [purpose, setPurpose] = useState<string>('');
   const router = useRouter();
   const { login } = useAdminAuth();
 
   useEffect(() => {
-    // Get admin auth data from sessionStorage
-    const authData = sessionStorage.getItem('adminAuth');
-    if (!authData) {
-      router.push('/admin/auth/signin');
-      return;
-    }
+    // Get URL params
+    const urlParams = new URLSearchParams(window.location.search);
+    const email = urlParams.get('email');
+    const purposeParam = urlParams.get('purpose');
     
-    try {
-      const parsedAuth = JSON.parse(authData);
-      setAdminAuth(parsedAuth);
-    } catch (error) {
-      console.error('Invalid auth data:', error);
-      router.push('/admin/auth/signin');
+    if (purposeParam === 'password_reset' && email) {
+      // For password reset flow
+      setAdminAuth({ adminId: '', email });
+      setPurpose('password_reset');
+    } else {
+      // For login flow - get admin auth data from sessionStorage
+      const authData = sessionStorage.getItem('adminAuth');
+      if (!authData) {
+        router.push('/admin/auth/signin');
+        return;
+      }
+      
+      try {
+        const parsedAuth = JSON.parse(authData);
+        setAdminAuth(parsedAuth);
+        setPurpose('login');
+      } catch (error) {
+        console.error('Invalid auth data:', error);
+        router.push('/admin/auth/signin');
+      }
     }
   }, [router]);
 
@@ -132,7 +145,7 @@ export default function AdminVerifyOTPPage() {
     }
 
     if (!adminAuth) {
-      setError('Authentication data missing. Please sign in again.');
+      setError('Authentication data missing. Please try again.');
       return;
     }
 
@@ -140,6 +153,13 @@ export default function AdminVerifyOTPPage() {
     setError('');
 
     try {
+      if (purpose === 'password_reset') {
+        // For password reset, just redirect to reset password page
+        window.location.href = `/admin/auth/reset-password?email=${encodeURIComponent(adminAuth.email)}&otp=${otp}`;
+        return;
+      }
+
+      // For login flow
       const response = await fetch('/api/admin/auth/verify-otp', {
         method: 'POST',
         headers: {
@@ -279,9 +299,14 @@ export default function AdminVerifyOTPPage() {
           </div>
 
           <div className="mb-6">
-            <h2 className="text-2xl font-semibold text-gray-900 mb-2">Verify Your Identity</h2>
+            <h2 className="text-2xl font-semibold text-gray-900 mb-2">
+              {purpose === 'password_reset' ? 'Enter Reset Code' : 'Verify Your Identity'}
+            </h2>
             <p className="text-gray-600">
-              We've sent a 6-digit verification code to
+              {purpose === 'password_reset' 
+                ? 'We\'ve sent a 6-digit reset code to' 
+                : 'We\'ve sent a 6-digit verification code to'
+              }
             </p>
             <p className="text-gray-900 font-medium flex items-center justify-center mt-2">
               <Mail className="w-4 h-4 mr-2 text-orange-600" />

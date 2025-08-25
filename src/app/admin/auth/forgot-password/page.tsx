@@ -55,19 +55,31 @@ export default function ForgotPasswordPage() {
     
     setIsLoading(true);
     
-    // TODO: Implement forgot password API call
-    console.log('Forgot password request for:', formData.email);
-    
-    // Simulate success for UI demo
-    setTimeout(() => {
+    try {
+      const response = await fetch('/api/admin/auth/forgot-password', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email: formData.email }),
+      });
+
+      if (response.ok) {
+        // Redirect to OTP verification page
+        window.location.href = `/admin/auth/verify-otp?email=${encodeURIComponent(formData.email)}&purpose=password_reset`;
+      } else {
+        const data = await response.json();
+        setErrors({ email: data.error || 'Failed to send OTP' });
+      }
+    } catch (error) {
+      setErrors({ email: 'Network error. Please try again.' });
+    } finally {
       setIsLoading(false);
-      setIsEmailSent(true);
-    }, 2000);
+    }
   };
 
   const handleGoBack = () => {
-    // TODO: Navigate back to sign-in page
-    console.log('Going back to sign-in page');
+    window.location.href = '/admin/auth/signin';
   };
 
   const handleResendEmail = () => {

@@ -68,19 +68,40 @@ export default function ResetPasswordPage() {
     
     setIsLoading(true);
     
-    // TODO: Implement reset password API call
-    console.log('Reset password request:', { password: formData.password });
-    
-    // Simulate success for UI demo
-    setTimeout(() => {
+    try {
+      // Get email and OTP from URL params
+      const urlParams = new URLSearchParams(window.location.search);
+      const email = urlParams.get('email');
+      const otp = urlParams.get('otp');
+
+      const response = await fetch('/api/admin/auth/reset-password', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email,
+          otp,
+          newPassword: formData.password,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setIsPasswordReset(true);
+      } else {
+        setErrors({ password: data.error || 'Failed to reset password' });
+      }
+    } catch (error) {
+      setErrors({ password: 'Network error. Please try again.' });
+    } finally {
       setIsLoading(false);
-      setIsPasswordReset(true);
-    }, 2000);
+    }
   };
 
   const handleGoToSignIn = () => {
-    // TODO: Navigate to sign-in page
-    console.log('Going to sign-in page');
+    window.location.href = '/admin/auth/signin';
   };
 
   const getPasswordStrength = (password: string) => {
