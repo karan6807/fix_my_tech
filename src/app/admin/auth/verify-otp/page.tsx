@@ -180,8 +180,8 @@ export default function AdminVerifyOTPPage() {
         router.push('/admin/dashboard');
       }, 1500);
 
-    } catch (error: any) {
-      setError(error.message);
+    } catch (error: unknown) {
+      setError(error instanceof Error ? error.message : 'An error occurred');
     } finally {
       setIsLoading(false);
     }
@@ -215,8 +215,8 @@ export default function AdminVerifyOTPPage() {
       setCountdown(60);
       setCanResend(false);
 
-    } catch (error: any) {
-      setError(error.message);
+    } catch (error: unknown) {
+      setError(error instanceof Error ? error.message : 'An error occurred');
     } finally {
       setIsResending(false);
     }

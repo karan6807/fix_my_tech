@@ -44,7 +44,7 @@ const RepairDashboard = () => {
       const data = await response.json();
 
       if (data.success) {
-        const transformedBookings = data.bookings.map((booking: any) => ({
+        const transformedBookings = data.bookings.map((booking: { id: string; customerName: string; email: string; phone?: string; address?: string; serviceType: string; device: string; issue: string; status: string; createdAt: string; assignedEngineer?: string; completionReport?: { workPerformed: string; partsUsed?: string; paymentAmount?: number; completedAt: string } }) => ({
           id: booking.id.slice(-6).toUpperCase(),
           name: booking.customerName,
           email: booking.email,

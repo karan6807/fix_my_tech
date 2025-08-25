@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase';
 
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
     const { data: employees, error } = await supabase
       .from('employees')
@@ -12,7 +12,7 @@ export async function GET(request: NextRequest) {
       throw error;
     }
 
-    const formattedEmployees = employees.map((employee: any) => ({
+    const formattedEmployees = employees.map((employee: { id: string; first_name: string; last_name: string; email: string; phone?: string; position?: string; is_active: boolean; created_at: string }) => ({
       id: employee.id,
       fullName: `${employee.first_name} ${employee.last_name}`,
       email: employee.email,

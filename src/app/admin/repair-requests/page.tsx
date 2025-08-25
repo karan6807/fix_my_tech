@@ -2,6 +2,7 @@
 
 'use client';
 import React, { useState, useEffect, useRef } from 'react';
+import Image from 'next/image';
 import { useAdminAuth } from '@/contexts/AdminAuthContext';
 import {
   Users,
@@ -115,9 +116,11 @@ function CompletionReportSection({ selectedRequest }: { selectedRequest: RepairR
             <div className="mt-2 grid grid-cols-2 md:grid-cols-3 gap-3">
               {proofImages.map((image) => (
                 <div key={image.id} className="relative group">
-                  <img
+                  <Image
                     src={image.imageUrl}
                     alt={image.fileName}
+                    width={200}
+                    height={176}
                     className="w-full h-44 object-cover rounded-lg border-2 border-white shadow-sm cursor-pointer hover:shadow-md transition-shadow"
                     onClick={() => {
                       setSelectedImage(image.imageUrl);
@@ -157,9 +160,11 @@ function CompletionReportSection({ selectedRequest }: { selectedRequest: RepairR
       {showImageModal && selectedImage && (
         <div className="fixed inset-0 bg-opacity-75 flex items-center justify-center z-50 p-4" onClick={() => setShowImageModal(false)}>
           <div className="relative max-w-4xl max-h-full">
-            <img
+            <Image
               src={selectedImage}
               alt="Proof image"
+              width={800}
+              height={600}
               className="max-w-full max-h-full object-contain rounded-lg"
             />
             <button
@@ -246,7 +251,7 @@ export default function RepairRequestsPage() {
       const response = await fetch('/api/admin/fetch-employee');
       if (response.ok) {
         const data = await response.json();
-        const formattedEngineers = data.employees.map((emp: any) => ({
+        const formattedEngineers = data.employees.map((emp: { id: string; fullName: string; email: string; phoneNumber: string; specialization: string; status: string }) => ({
           id: emp.id,
           name: emp.fullName,
           email: emp.email,
@@ -293,7 +298,7 @@ export default function RepairRequestsPage() {
 
       if (data.success) {
         console.log('Bookings received:', data.bookings.length);
-        data.bookings.forEach((booking: any, index: number) => {
+        data.bookings.forEach((booking: { id: string; customerName: string }, index: number) => {
           console.log(`Booking ${index + 1}: ID=${booking.id}, Customer=${booking.customerName}`);
         });
         
