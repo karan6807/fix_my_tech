@@ -111,7 +111,7 @@ export default function EmployeeNavbar({ onToggleSidebar }: NavbarProps) {
         await signOut();
     };
 
-    const fetchNotifications = async () => {
+    const fetchNotifications = React.useCallback(async () => {
         try {
             const engineerId = employee?.id || 'engineer-id';
             const response = await fetch(`/api/notifications?userId=${engineerId}&userType=engineer&unreadOnly=true`);
@@ -123,7 +123,7 @@ export default function EmployeeNavbar({ onToggleSidebar }: NavbarProps) {
         } catch (error) {
             console.error('Error fetching notifications:', error);
         }
-    };
+    }, [employee?.id]);
 
     const markAsRead = async (notificationIds?: string[]) => {
         try {
@@ -147,7 +147,7 @@ export default function EmployeeNavbar({ onToggleSidebar }: NavbarProps) {
         fetchNotifications();
         const interval = setInterval(fetchNotifications, 30000);
         return () => clearInterval(interval);
-    }, [employee?.id, fetchNotifications]);
+    }, [fetchNotifications]);
 
     const getStatusColor = (status: string) => {
         switch (status) {
